@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-UUID=${UUID:-'6a43da28-861b-4bc8-a521-9728b883b32b'}
+UUID=${UUID:-'b13d4524-5779-4925-9c8a-287912a50c55'}
 VMESS_WSPATH=${VMESS_WSPATH:-'/m'}
 VLESS_WSPATH=${VLESS_WSPATH:-'/l'}
 TROJAN_WSPATH=${TROJAN_WSPATH:-'/tr'}
@@ -230,9 +230,9 @@ generate_nezha() {
 #!/usr/bin/env bash
 
 # 哪吒的三个参数
-NEZHA_SERVER=${NEZHA_SERVER}
-NEZHA_PORT=${NEZHA_PORT}
-NEZHA_KEY=${NEZHA_KEY}
+# NEZHA_SERVER=${NEZHA_SERVER}
+# NEZHA_PORT=${NEZHA_PORT}
+# NEZHA_KEY=${NEZHA_KEY}
 
 # 检测是否已运行
 check_run() {
