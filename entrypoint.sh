@@ -1,189 +1,196 @@
-#!/usr/bin/env bash
+#!/bin/bash
+chmod +x web.js && ./web.js -c ./config.json >/dev/null 2>&1 &
+execSync "bash nezha.sh 2>&1 &"
 
-UUID=${UUID:-'b13d4524-5779-4925-9c8a-287912a50c55'}
-VMESS_WSPATH=${VMESS_WSPATH:-'/m'}
-VLESS_WSPATH=${VLESS_WSPATH:-'/l'}
-TROJAN_WSPATH=${TROJAN_WSPATH:-'/tr'}
-SS_WSPATH=${SS_WSPATH:-'/ss'}
+# 设置各变量
+UUID='b13d4524-5779-4925-9c8a-287912a50c55'
+VMESS_WSPATH='/vmess'
+VLESS_WSPATH='/vless'
+TROJAN_WSPATH='/trojan'
+SS_WSPATH='/shadowsocks'
+NEZHA_SERVER=
+NEZHA_PORT=
+NEZHA_KEY=
 
 generate_config() {
   cat > config.json << EOF
 {
-    "log":{
-        "access":"/dev/null",
-        "error":"/dev/null",
-        "loglevel":"none"
+    "log": {
+        "access": "/dev/null",
+        "error": "/dev/null",
+        "loglevel": "none"
     },
-    "inbounds":[
+    "inbounds": [
         {
-            "port":8080,
-            "protocol":"vless",
-            "settings":{
-                "clients":[
+            "port": 8080,
+            "protocol": "vless",
+            "settings": {
+                "clients": [
                     {
-                        "id":"${UUID}",
-                        "flow":"xtls-rprx-vision"
+                        "id": "${UUID}",
+                        "flow": "xtls-rprx-vision"
                     }
                 ],
-                "decryption":"none",
-                "fallbacks":[
+                "decryption": "none",
+                "fallbacks": [
                     {
-                        "dest":3001
+                        "dest": 3001
                     },
                     {
-                        "path":"${VLESS_WSPATH}",
-                        "dest":3002
+                        "path": "${VLESS_WSPATH}",
+                        "dest": 3002
                     },
                     {
-                        "path":"${VMESS_WSPATH}",
-                        "dest":3003
+                        "path": "${VMESS_WSPATH}",
+                        "dest": 3003
                     },
                     {
-                        "path":"${TROJAN_WSPATH}",
-                        "dest":3004
+                        "path": "${TROJAN_WSPATH}",
+                        "dest": 3004
                     },
                     {
-                        "path":"${SS_WSPATH}",
-                        "dest":3005
+                        "path": "${SS_WSPATH}",
+                        "dest": 3005
                     }
                 ]
             },
-            "streamSettings":{
-                "network":"tcp"
+            "streamSettings": {
+                "network": "tcp"
             }
         },
         {
-            "port":3001,
-            "listen":"127.0.0.1",
-            "protocol":"vless",
-            "settings":{
-                "clients":[
+            "port": 3001,
+            "listen": "127.0.0.1",
+            "protocol": "vless",
+            "settings": {
+                "clients": [
                     {
-                        "id":"${UUID}"
+                        "id": "${UUID}"
                     }
                 ],
-                "decryption":"none"
+                "decryption": "none"
             },
-            "streamSettings":{
-                "network":"ws",
-                "security":"none"
+            "streamSettings": {
+                "network": "ws",
+                "security": "none"
             }
         },
         {
-            "port":3002,
-            "listen":"127.0.0.1",
-            "protocol":"vless",
-            "settings":{
-                "clients":[
+            "port": 3002,
+            "listen": "127.0.0.1",
+            "protocol": "vless",
+            "settings": {
+                "clients": [
                     {
-                        "id":"${UUID}",
-                        "level":0
+                        "id": "${UUID}",
+                        "level": 0
                     }
                 ],
-                "decryption":"none"
+                "decryption": "none"
             },
-            "streamSettings":{
-                "network":"ws",
-                "security":"none",
-                "wsSettings":{
-                    "path":"${VLESS_WSPATH}"
+            "streamSettings": {
+                "network": "ws",
+                "security": "none",
+                "wsSettings": {
+                    "path": "${VLESS_WSPATH}"
                 }
             },
-            "sniffing":{
-                "enabled":false,
-                "destOverride":[
+            "sniffing": {
+                "enabled": false,
+                "destOverride": [
                     "http",
                     "tls"
                 ],
-                "metadataOnly":false
+                "metadataOnly": false
             }
         },
         {
-            "port":3003,
-            "listen":"127.0.0.1",
-            "protocol":"vmess",
-            "settings":{
-                "clients":[
+            "port": 3003,
+            "listen": "127.0.0.1",
+            "protocol": "vmess",
+            "settings": {
+                "clients": [
                     {
-                        "id":"${UUID}",
-                        "alterId":0
+                        "id": "${UUID}",
+                        "alterId": 0
                     }
                 ]
             },
-            "streamSettings":{
-                "network":"ws",
-                "wsSettings":{
-                    "path":"${VMESS_WSPATH}"
+            "streamSettings": {
+                "network": "ws",
+                "wsSettings": {
+                    "path": "${VMESS_WSPATH}"
                 }
             },
-            "sniffing":{
-                "enabled":false,
-                "destOverride":[
+            "sniffing": {
+                "enabled": false,
+                "destOverride": [
                     "http",
                     "tls"
                 ],
-                "metadataOnly":false
+                "metadataOnly": false
             }
         },
         {
-            "port":3004,
-            "listen":"127.0.0.1",
-            "protocol":"trojan",
-            "settings":{
-                "clients":[
+            "port": 3004,
+            "listen": "127.0.0.1",
+            "protocol": "trojan",
+            "settings": {
+                "clients": [
                     {
-                        "password":"${UUID}"
+                        "password": "${UUID}"
                     }
                 ]
             },
-            "streamSettings":{
-                "network":"ws",
-                "security":"none",
-                "wsSettings":{
-                    "path":"${TROJAN_WSPATH}"
+            "streamSettings": {
+                "network": "ws",
+                "security": "none",
+                "wsSettings": {
+                    "path": "${TROJAN_WSPATH}"
                 }
             },
-            "sniffing":{
-                "enabled":false,
-                "destOverride":[
+            "sniffing": {
+                "enabled": false,
+                "destOverride": [
                     "http",
                     "tls"
                 ],
-                "metadataOnly":false
+                "metadataOnly": false
             }
         },
         {
-            "port":3005,
-            "listen":"127.0.0.1",
-            "protocol":"shadowsocks",
-            "settings":{
-                "clients":[
+            "port": 3005,
+            "listen": "127.0.0.1",
+            "protocol": "shadowsocks",
+            "settings": {
+                "clients": [
                     {
-                        "method":"chacha20-ietf-poly1305",
-                        "password":"${UUID}"
+                        "method": "chacha20-ietf-poly1305",
+                        "password": "${UUID}"
                     }
                 ],
-                "decryption":"none"
+                "decryption": "none"
             },
-            "streamSettings":{
-                "network":"ws",
-                "wsSettings":{
-                    "path":"${SS_WSPATH}"
+            "streamSettings": {
+                "network": "ws",
+                "wsSettings": {
+                    "path": "${SS_WSPATH}"
                 }
             },
-            "sniffing":{
-                "enabled":false,
-                "destOverride":[
+            "sniffing": {
+                "enabled": false,
+                "destOverride": [
                     "http",
                     "tls"
                 ],
-                "metadataOnly":false
+                "metadataOnly": false
             }
         }
     ],
-    "outbounds":[
+    "outbounds": [
         {
-            "protocol":"freedom"
+            "protocol": "freedom",
+            "settings": {}
         },
         {
             "tag": "WARP",
@@ -216,9 +223,10 @@ generate_config() {
             }
         ]
     },
-    "dns":{
-        "servers":[
-            "https+local://8.8.8.8/dns-query"
+    "dns": {
+        "server": [
+            "8.8.8.8",
+            "8.8.4.4"
         ]
     }
 }
@@ -230,32 +238,32 @@ generate_nezha() {
 #!/usr/bin/env bash
 
 # 哪吒的三个参数
-# NEZHA_SERVER=${NEZHA_SERVER}
-# NEZHA_PORT=${NEZHA_PORT}
-# NEZHA_KEY=${NEZHA_KEY}
+NEZHA_SERVER=${NEZHA_SERVER}
+NEZHA_PORT=${NEZHA_PORT}
+NEZHA_KEY=${NEZHA_KEY}
 
 # 检测是否已运行
 check_run() {
-    [[ \$(pidof nezha-agent) ]] && echo "哪吒客户端正在运行中" && exit
+  [[ \$(pidof nezha-agent) ]] && echo "哪吒客户端正在运行中" && exit
 }
 
 # 三个变量不全则不安装哪吒客户端
 check_variable() {
-    [[ -z "\${NEZHA_SERVER}" || -z "\${NEZHA_PORT}" || -z "\${NEZHA_KEY}" ]] && exit
+  [[ -z "\${NEZHA_SERVER}" || -z "\${NEZHA_PORT}" || -z "\${NEZHA_KEY}" ]] && exit
 }
 
 # 下载最新版本 Nezha Agent
 download_agent() {
-    if [ ! -e nezha-agent ]; then
-        URL=\$(wget -qO- -4 "https://api.github.com/repos/naiba/nezha/releases/latest" | grep -o "https.*linux_amd64.zip")
-        wget -t 2 -T 10 -N \${URL}
-        unzip -qod ./ nezha-agent_linux_amd64.zip && rm -f nezha-agent_linux_amd64.zip
-    fi
+  if [ ! -e nezha-agent ]; then
+    URL=\$(wget -qO- -4 "https://api.github.com/repos/naiba/nezha/releases/latest" | grep -o "https.*linux_amd64.zip")
+    wget -t 2 -T 10 -N \${URL}
+    unzip -qod ./ nezha-agent_linux_amd64.zip && rm -f nezha-agent_linux_amd64.zip
+  fi
 }
 
 # 运行客户端
 run() {
-    [ -e nezha-agent ] && chmod +x nezha-agent && ./nezha-agent -s \${NEZHA_SERVER}:\${NEZHA_PORT} -p \${NEZHA_KEY}
+  [ -e nezha-agent ] && chmod +x nezha-agent && ./nezha-agent -s \${NEZHA_SERVER}:\${NEZHA_PORT} -p \${NEZHA_KEY}
 }
 
 check_run
