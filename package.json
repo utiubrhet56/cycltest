@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": "",
   "author": "Misaka-blog",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "private": false,
   "scripts": {
     "start": "node index.js"
